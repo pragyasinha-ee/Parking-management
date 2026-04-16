@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartPark - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4f46e5 100%);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background shapes */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 20% 80%, rgba(79, 70, 229, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.2) 0%, transparent 50%);
+      animation: bgFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes bgFloat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(2%, 2%) rotate(1deg); }
+      50% { transform: translate(0, 4%) rotate(0deg); }
+      75% { transform: translate(-2%, 2%) rotate(-1deg); }
+    }
+
+    .auth-container {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      z-index: 10;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 48px 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    }
+
+    .logo i {
+      font-size: 28px;
+      color: white;
+    }
+
+    .auth-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+      font-size: 15px;
+      color: #64748b;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 16px;
+      transition: color 0.2s ease;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px 14px 48px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      outline: none;
+      background: #f8fafc;
+    }
+
+    .form-input:focus {
+      border-color: #4f46e5;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-input:focus + i,
+    .input-wrapper:focus-within i {
+      color: #4f46e5;
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 45px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: #64748b;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+      box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.42);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .divider span {
+      font-size: 13px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .toggle-text {
+      text-align: center;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .toggle-link {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .toggle-link:hover {
+      color: #4338ca;
+      text-decoration: underline;
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .error-message.show {
+      display: flex;
+    }
+
+    .error-message i {
+      flex-shrink: 0;
+    }
+
+    .success-message {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 36px 28px;
+      }
+
+      .auth-title {
+        font-size: 24px;
+      }
+
+      .form-input {
+        padding: 12px 16px 12px 44px;
+      }
+
+      .input-wrapper i {
+        left: 14px;
+        font-size: 14px;
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo">
+          <i class="fas fa-parking"></i>
+        </div>
+        <h1 class="auth-title" id="formTitle">Welcome Back</h1>
+        <p class="auth-subtitle" id="formSubtitle">Sign in to continue to SmartPark</p>
+      </div>
+
+      <div class="error-message" id="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="errorText"></span>
+      </div>
+
+      <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        <span id="successText"></span>
+      </div>
+
+      <form id="authForm" class="fade-in">
+        <div class="form-group" id="nameGroup">
+          <label class="form-label" for="name">Full Name</label>
+          <div class="input-wrapper">
+            <input type="text" class="form-input" id="name" placeholder="John Doe">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-wrapper">
+            <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
+            <i class="fas fa-envelope"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+            <i class="fas fa-lock"></i>
+            <button type="button" class="password-toggle" id="passwordToggle">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group" id="confirmGroup" style="display: none;">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm your password">
+            <i class="fas fa-lock"></i>
+            <button type="button" class="password-toggle" id="confirmPasswordToggle">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group" id="phoneGroup" style="display: none;">
+          <label class="form-label" for="phone">Phone Number</label>
+          <div class="input-wrapper">
+            <input type="tel" class="form-input" id="phone" placeholder="9876543210">
+            <i class="fas fa-phone"></i>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span id="btnText">Sign In</span>
+          <div class="spinner hidden" id="btnSpinner"></div>
+        </button>
+
+        <div class="divider" id="divider">
+          <span>or continue with</span>
+        </div>
+
+        <p class="toggle-text">
+          <span id="toggleText">Don't have an account?</span>
+          <a href="#" class="toggle-link" id="toggleLink">Create one</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("authForm");
+    const formTitle = document.getElementById("formTitle");
+    const formSubtitle = document.getElementById("formSubtitle");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const toggleText = document.getElementById("toggleText");
+    const toggleLink = document.getElementById("toggleLink");
+    const errorMessage = document.getElementById("errorMessage");
+    const errorText = document.getElementById("errorText");
+    const successMessage = document.getElementById("successMessage");
+    const successText = document.getElementById("successText");
+    const nameGroup = document.getElementById("nameGroup");
+    const confirmGroup = document.getElementById("confirmGroup");
+    const phoneGroup = document.getElementById("phoneGroup");
+    const divider = document.getElementById("divider");
+    const passwordToggle = document.getElementById("passwordToggle");
+    const confirmPasswordToggle = document.getElementById("confirmPasswordToggle");
+
+    let mode = "login";
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const isRegister = mode === "register";
+
+      // Update form fields
+      nameGroup.style.display = isRegister ? "block" : "none";
+      confirmGroup.style.display = isRegister ? "block" : "none";
+      phoneGroup.style.display = isRegister ? "block" : "none";
+      divider.style.display = isRegister ? "none" : "flex";
+
+      // Update text
+      formTitle.textContent = isRegister ? "Create Account" : "Welcome Back";
+      formSubtitle.textContent = isRegister ? "Join SmartPark today" : "Sign in to continue to SmartPark";
+      btnText.textContent = isRegister ? "Create Account" : "Sign In";
+      toggleText.textContent = isRegister ? "Already have an account?" : "Don't have an account?";
+      toggleLink.textContent = isRegister ? "Sign In" : "Create one";
+
+      // Hide messages
+      hideMessages();
+
+      // Animate form
+      form.classList.remove("fade-in");
+      void form.offsetWidth; // Trigger reflow
+      form.classList.add("fade-in");
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.add("show");
+      successMessage.classList.remove("show");
+    }
+
+    function showSuccess(message) {
+      successText.textContent = message;
+      successMessage.classList.add("show");
+      errorMessage.classList.remove("show");
+    }
+
+    function hideMessages() {
+      errorMessage.classList.remove("show");
+      successMessage.classList.remove("show");
+    }
+
+    function togglePasswordVisibility(inputId, toggleBtn) {
+      const input = document.getElementById(inputId);
+      const icon = toggleBtn.querySelector("i");
+      
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    passwordToggle.addEventListener("click", () => togglePasswordVisibility("password", passwordToggle));
+    confirmPasswordToggle.addEventListener("click", () => togglePasswordVisibility("confirmPassword", confirmPasswordToggle));
+
+    toggleLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      setMode(mode === "login" ? "register" : "login");
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideMessages();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!email || !password) {
+        showError("Please fill in all required fields.");
+        return;
+      }
+
+      const payload = { email, password };
+
+      if (mode === "register") {
+        payload.name = document.getElementById("name").value.trim();
+        payload.phone = document.getElementById("phone").value.trim();
+        const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+        if (!payload.name) {
+          showError("Name is required.");
+          return;
+        }
+        if (password.length < 6) {
+          showError("Password must be at least 6 characters.");
+          return;
+        }
+        if (password !== confirmPassword) {
+          showError("Passwords do not match.");
+          return;
+        }
+      }
+
+      // Show loading
+      submitBtn.disabled = true;
+      btnText.classList.add("hidden");
+      btnSpinner.classList.remove("hidden");
+
+      try {
+        const endpoint = mode === "register" ? "register" : "login";
+        const res = await fetch("http://localhost:4000/api/auth/" + endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Authentication failed.");
+        }
+
+        // Store auth data
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("authUser", JSON.stringify(data.user));
+
+        if (mode === "register") {
+          showSuccess("Account created successfully! Redirecting...");
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1500);
+        } else {
+          window.location.href = "index.html";
+        }
+      } catch (err) {
+        showError(err.message || "Server not reachable. Please try again.");
+        submitBtn.disabled = false;
+        btnText.classList.remove("hidden");
+        btnSpinner.classList.add("hidden");
+      }
+    });
+
+    // Initialize in login mode
+    setMode("login");
+  </script>
+</body>
+</html>

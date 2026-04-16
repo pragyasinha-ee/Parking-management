@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartPark - Parking Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #818cf8;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --bg-light: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Mobile Header */
+    .mobile-header {
+      display: none;
+      background: var(--bg-card);
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-light);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      padding: 24px 0;
+      overflow-y: auto;
+      z-index: 200;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 16px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand-text {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-section {
+      padding: 8px 12px;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.4);
+      padding: 8px 12px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      border-radius: var(--radius);
+      margin: 2px 0;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: white;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .submenu {
+      padding-left: 48px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+
+    .submenu.open {
+      max-height: 500px;
+    }
+
+    .submenu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .submenu-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: white;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.available { background: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
+    .status-dot.occupied { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+    .status-dot.booked { background: var(--info); box-shadow: 0 0 8px var(--info); }
+
+    /* Overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 150;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .overlay.show {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      padding: 32px;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+
+    .main-content.expanded {
+      margin-left: 0;
+    }
+
+    /* Top Bar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 20px 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .welcome-section h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .welcome-section p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      gap: 10px;
+      min-width: 280px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+      color: var(--text-primary);
+    }
+
+    .search-box i {
+      color: var(--text-muted);
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--bg-light);
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+
+    .icon-btn .notification-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--danger);
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px 8px 8px;
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .user-profile:hover {
+      background: var(--border);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .user-role {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .stat-card.primary::before { background: var(--primary); }
+    .stat-card.success::before { background: var(--secondary); }
+    .stat-card.danger::before { background: var(--danger); }
+    .stat-card.warning::before { background: var(--warning); }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .stat-card.primary .stat-icon { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+    .stat-card.success .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--secondary); }
+    .stat-card.danger .stat-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .stat-card.warning .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .stat-change {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 20px;
+    }
+
+    .stat-change.positive {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--secondary);
+    }
+
+    .stat-change.negative {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Section */
+    .section {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: var(--primary);
+    }
+
+    /* Slot Grid */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .slot-card {
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 2px solid transparent;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .slot-card:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .slot-card.available {
+      border-left: 4px solid var(--secondary);
+    }
+
+    .slot-card.occupied {
+      border-left: 4px solid var(--danger);
+    }
+
+    .slot-card.booked {
+      border-left: 4px solid var(--info);
+    }
+
+    .slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .slot-number {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .slot-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .slot-status.available {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--secondary);
+    }
+
+    .slot-status.occupied {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .slot-status.booked {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--info);
+    }
+
+    .slot-info {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .slot-info p {
+      margin: 4px 0;
+    }
+
+    .slot-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-success {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: var(--secondary-dark);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-light);
+      color: var(--text-primary);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Activity List */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .activity-item:hover {
+      background: var(--border);
+    }
+
+    .activity-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.payment {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--secondary);
+    }
+
+    .activity-icon.entry {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--info);
+    }
+
+    .activity-icon.exit {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .activity-icon.booking {
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary);
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .activity-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .activity-amount {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--secondary);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-light);
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 28px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-light);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .form-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      border-left: 4px solid var(--primary);
+      min-width: 320px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.success { border-left-color: var(--secondary); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+
+    .toast-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .toast.success .toast-icon { background: rgba(16, 185, 129, 0.1); color: var(--secondary); }
+    .toast.error .toast-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .toast-message {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .main-content {
+        padding-top: 80px;
+      }
+
+      .search-box {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .slots-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .modal {
+        margin: 16px;
+        max-width: calc(100% - 32px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .slots-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <div class="logo">
+      <i class="fas fa-parking"></i>
+      SmartPark
+    </div>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fas fa-parking"></i>
+      </div>
+      <span class="brand-text">SmartPark</span>
+    </div>
+
+    <nav class="nav-section">
+      <a href="#dashboard" class="nav-item active" data-section="dashboard">
+        <i class="fas fa-th-large"></i>
+        Dashboard
+      </a>
+    </nav>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Parking</div>
+      <a href="#slots" class="nav-item" data-section="slots">
+        <i class="fas fa-square"></i>
+        Parking Slots
+      </a>
+      <a href="#entry" class="nav-item" data-section="entry">
+        <i class="fas fa-sign-in-alt"></i>
+        Vehicle Entry
+      </a>
+      <a href="#exit" class="nav-item" data-section="exit">
+        <i class="fas fa-sign-out-alt"></i>
+        Vehicle Exit
+      </a>
+      <a href="#booking" class="nav-item" data-section="booking">
+        <i class="fas fa-calendar-check"></i>
+        create Reservations
+      </a>
+    </div>
+
+    <nav class="nav-section">
+      <div class="nav-section-title">Management</div>
+      <a href="#reservations" class="nav-item" data-section="reservations">
+        <i class="fas fa-calendar"></i>
+        Reservation Management
+      </a>
+      <a href="#payments" class="nav-item" data-section="payments">
+        <i class="fas fa-credit-card"></i>
+        Payments
+        <span class="badge" id="pendingPayments">0</span>
+      </a>
+      <a href="#reports" class="nav-item" id="reportsToggle">
+        <i class="fas fa-chart-bar"></i>
+        Reports
+        <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 12px;"></i>
+      </a>
+      <div class="submenu" id="reportsSubmenu">
+        <a href="#daily" class="submenu-item" data-section="daily">
+          <i class="fas fa-calendar-day"></i>
+          Daily Report
+        </a>
+        <a href="#weekly" class="submenu-item" data-section="weekly">
+          <i class="fas fa-calendar-week"></i>
+          Weekly Report
+        </a>
+        <a href="#monthly" class="submenu-item" data-section="monthly">
+          <i class="fas fa-calendar-alt"></i>
+          Monthly Report
+        </a>
+      </div>
+      <a href="#users" class="nav-item" data-section="users">
+        <i class="fas fa-users"></i>
+        User Management
+      </a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-section-title">System</div>
+      <a href="#settings" class="nav-item" data-section="settings">
+        <i class="fas fa-cog"></i>
+        Settings
+      </a>
+      <a href="#help" class="nav-item" data-section="help">
+        <i class="fas fa-question-circle"></i>
+        Help Center
+      </a>
+      <a href="#contact" class="nav-item" data-section="contact">
+        <i class="fas fa-envelope"></i>
+        Contact
+      </a>
+    </nav>
+
+    <nav class="nav-section">
+      <a href="auth.html" class="nav-item" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="welcome-section">
+        <h1>Parking Operations Center</h1>
+        <p id="userInfo">Welcome back</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search slots, vehicles...">
+        </div>
+        <button class="icon-btn">
+          <i class="fas fa-bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">User</span>
+            <span class="user-role">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div id="contentBody">
+      <!-- Dynamic content loaded here -->
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Modal Title</h2>
+        <button class="modal-close" id="modalClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+        <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE = "http://localhost:4000/api";
+    const token = localStorage.getItem("authToken");
+
+    // State
+    let currentSection = "dashboard";
+    let modalAction = null;
+
+    // DOM Elements
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const menuToggle = document.getElementById("menuToggle");
+    const mainContent = document.getElementById("mainContent");
+    const contentBody = document.getElementById("contentBody");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const modalClose = document.getElementById("modalClose");
+    const modalCancel = document.getElementById("modalCancel");
+    const modalConfirm = document.getElementById("modalConfirm");
+    const toastContainer = document.getElementById("toastContainer");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
+    // Redirect if not logged in
+    if (!token) {
+      window.location.href = "auth.html";
+    }
+
+    // Mobile menu toggle
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("show");
+    });
+
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("show");
+    });
+
+    // Reports submenu toggle
+    const reportsToggle = document.getElementById("reportsToggle");
+    const reportsSubmenu = document.getElementById("reportsSubmenu");
+    reportsToggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      reportsSubmenu.classList.toggle("open");
+      const icon = reportsToggle.querySelector(".fa-chevron-down");
+      icon.style.transform = reportsSubmenu.classList.contains("open") ? "rotate(180deg)" : "rotate(0)";
+    });
+
+    // API Fetch
+    async function apiFetch(path, options = {}) {
+      const headers = options.headers || {};
+      headers["Authorization"] = "Bearer " + token;
+      if (options.body && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
+      console.log("API Request:", options.method || "GET", API_BASE + path);
+      const res = await fetch(API_BASE + path, { ...options, headers });
+      const data = await res.json();
+      console.log("API Response:", path, data);
+      if (!res.ok) {
+        throw new Error(data.message || "Request failed: " + res.status);
+      }
+      return data;
+    }
+
+    // Show toast notification
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="fas ${type === 'success' ? 'fa-check' : type === 'error' ? 'fa-times' : 'fa-exclamation'}"></i>
+        </div>
+        <span class="toast-message">${message}</span>
+      `;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "slideIn 0.3s ease reverse";
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Show/hide loading
+    function showLoading(show) {
+      loadingOverlay.classList.toggle("show", show);
+    }
+
+    // Modal functions
+    function openModal(title, bodyHtml, onConfirm) {
+      modalTitle.textContent = title;
+      modalBody.innerHTML = bodyHtml;
+      modalAction = onConfirm;
+      modalOverlay.classList.add("show");
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove("show");
+      modalAction = null;
+    }
+
+    modalClose.addEventListener("click", closeModal);
+    modalCancel.addEventListener("click", closeModal);
+
+    modalConfirm.addEventListener("click", async () => {
+      if (modalAction) {
+        await modalAction();
+      }
+      closeModal();
+    });
+
+    // Close modal on overlay click
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+      window.location.href = "auth.html";
+    });
+
+    // Load user info and update badge
+    async function loadUser() {
+      try {
+        const data = await apiFetch("/auth/me");
+        document.getElementById("userInfo").textContent = `Welcome back, ${data.user.name || data.user.email}`;
+        document.getElementById("userName").textContent = data.user.name || "User";
+        document.getElementById("userAvatar").textContent = (data.user.name || "U")[0].toUpperCase();
+        
+        // Update payment badge
+        updatePaymentBadge();
+      } catch (err) {
+        console.error("Failed to load user:", err);
+      }
+    }
+
+    // Update payment badge count
+    async function updatePaymentBadge() {
+      try {
+        const data = await apiFetch("/payments/recent");
+        const count = data.payments?.length || 0;
+        const badge = document.getElementById("pendingPayments");
+        badge.textContent = count;
+        badge.style.display = count > 0 ? "inline" : "none";
+      } catch (err) {
+        console.error("Failed to load payment count:", err);
+      }
+    }
+
+    // Helper functions
+    function slotPill(status) {
+      return `slot-status ${status}`;
+    }
+
+    function slotDot(status) {
+      return `status-dot ${status}`;
+    }
+
+    function calculateAmount(slot) {
+      if (!slot.occupiedAt) return { minutes: 0, amount: 0 };
+      const start = new Date(slot.occupiedAt).getTime();
+      const now = Date.now();
+      const minutes = Math.max(0, Math.ceil((now - start) / 60000));
+      const rate = slot.ratePerHour || 20;
+      const amount = Math.max(10, Math.ceil((minutes / 60) * rate));
+      return { minutes, amount };
+    }
+
+    // Navigation
+    document.querySelectorAll(".nav-item[data-section], .submenu-item[data-section]").forEach(item => {
+      item.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const section = item.dataset.section;
+        
+        // Update active state
+        document.querySelectorAll(".nav-item, .submenu-item").forEach(el => el.classList.remove("active"));
+        item.classList.add("active");
+
+        // Close mobile menu
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+
+        // Render section
+        await renderSection(section);
+      });
+    });
+
+    async function renderSection(section) {
+      currentSection = section;
+      showLoading(true);
+      console.log("Rendering section:", section);
+
+      try {
+        switch (section) {
+          case "dashboard":
+            await renderDashboard();
+            break;
+          case "slots":
+            await renderSlots();
+            break;
+          case "entry":
+            await renderEntry();
+            break;
+          case "exit":
+            await renderExit();
+            break;
+          case "booking":
+            await renderBooking();
+            break;
+          case "reservations":
+            await renderReservations();
+            break;
+          case "payments":
+            await renderPayments();
+            break;
+          default:
+            await renderDashboard();
+        }
+      } catch (err) {
+        console.error("Error rendering section:", err);
+        showToast(err.message, "error");
+        contentBody.innerHTML = `
+          <div class="section">
+            <h2 class="section-title">Error</h2>
+            <p style="color: var(--danger);">${err.message}</p>
+            <button class="btn btn-primary" onclick="renderSection('dashboard')">Go to Dashboard</button>
+          </div>
+        `;
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Dashboard
+    async function renderDashboard() {
+      try {
+        const [summary, payments, recentSlots] = await Promise.all([
+          apiFetch("/dashboard").catch(() => ({ totalSlots: 0, available: 0, occupied: 0, revenueToday: 0, revenueTotal: 0 })),
+          apiFetch("/payments/recent").catch(() => ({ payments: [] })),
+          apiFetch("/slots").catch(() => ({ slots: [] }))
+        ]);
+
+        const recentPayments = payments.payments?.slice(0, 5).map(p => `
+          <div class="activity-item">
+            <div class="activity-icon payment">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">Payment Received</div>
+              <div class="activity-meta">Slot ${p.slotNumber} • ${p.vehicleNo || "Vehicle"}</div>
+            </div>
+            <div class="activity-amount">₹${p.amount}</div>
+          </div>
+        `).join("") || "<div class='muted'>No recent payments</div>";
+
+        const availableSlots = recentSlots.slots?.filter(s => s.status === "available").slice(0, 4).map(s => `
+          <div class="slot-card available">
+            <div class="slot-header">
+              <span class="slot-number">Slot ${s.slotNumber}</span>
+              <span class="slot-status available">
+                <span class="${slotDot(s.status)}"></span>
+                Available
+              </span>
+            </div>
+            <div class="slot-info">
+              <p>${s.vehicleType || "All Vehicles"}</p>
+            </div>
+          </div>
+        `).join("") || "<div class='muted'>No available slots</div>";
+
+        contentBody.innerHTML = `
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card primary">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="fas fa-square"></i>
+                </div>
+                <div class="stat-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  12%
+                </div>
+              </div>
+              <div class="stat-value">${summary.totalSlots || 0}</div>
+              <div class="stat-label">Total Slots</div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  8%
+                </div>
+              </div>
+              <div class="stat-value">${summary.available || 0}</div>
+              <div class="stat-label">Available Slots</div>
+            </div>
+            <div class="stat-card danger">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-change negative">
+                  <i class="fas fa-arrow-down"></i>
+                  5%
+                </div>
+              </div>
+              <div class="stat-value">${summary.occupied || 0}</div>
+              <div class="stat-label">Occupied Slots</div>
+            </div>
+            <div class="stat-card warning">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  15%
+                </div>
+              </div>
+              <div class="stat-value">₹${summary.revenueToday || 0}</div>
+              <div class="stat-label">Today's Revenue</div>
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <!-- Recent Activity -->
+            <div class="section">
+              <div class="section-header">
+                <h2 class="section-title">
+                  <i class="fas fa-clock"></i>
+                  Recent Payments
+                </h2>
+                <button class="btn btn-ghost btn-sm" onclick="renderSection('payments')">View All</button>
+              </div>
+              <div class="activity-list">
+                ${recentPayments}
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="section">
+              <div class="section-header">
+                <h2 class="section-title">
+                  <i class="fas fa-bolt"></i>
+                  Quick Actions
+                </h2>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-primary btn-block" onclick="renderSection('entry')">
+                  <i class="fas fa-sign-in-alt"></i>
+                  Record Entry
+                </button>
+                <button class="btn btn-warning btn-block" onclick="renderSection('exit')">
+                  <i class="fas fa-sign-out-alt"></i>
+                  Record Exit
+                </button>
+                <button class="btn btn-success btn-block" onclick="renderSection('booking')">
+                  <i class="fas fa-calendar-check"></i>
+                  New Booking
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Available Slots -->
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="fas fa-parking"></i>
+                Available Slots
+              </h2>
+              <button class="btn btn-ghost btn-sm" onclick="renderSection('slots')">View All</button>
+            </div>
+            <div class="slots-grid">
+              ${availableSlots}
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    // Slots
+    async function renderSlots() {
+      try {
+        const data = await apiFetch("/slots");
+        const cards = data.slots.map(slot => {
+          const statusClass = slotPill(slot.status);
+          const statusLabel = slot.status.charAt(0).toUpperCase() + slot.status.slice(1);
+          const meta = slot.vehicleNo ? `${slot.vehicleType || "Vehicle"} • ${slot.vehicleNo}` : "No vehicle";
+          const { minutes, amount } = calculateAmount(slot);
+          const durationText = slot.occupiedAt ? `${minutes} mins • Est ₹${amount}` : "Not occupied";
+
+          return `
+            <div class="slot-card ${slot.status}" id="slot-${slot.slotNumber}">
+              <div class="slot-header">
+                <span class="slot-number">Slot ${slot.slotNumber}</span>
+                <span class="${statusClass}">
+                  <span class="${slotDot(slot.status)}"></span>
+                  ${statusLabel}
+                </span>
+              </div>
+              <div class="slot-info">
+                <p>${meta}</p>
+                <p>${durationText}</p>
+              </div>
+              <div class="slot-actions">
+                ${slot.status === "available" ? `<button class="btn btn-success btn-sm" data-action="book" data-slot="${slot.slotNumber}"><i class="fas fa-calendar-plus"></i> Book</button>` : ""}
+                ${slot.status === "booked" ? `<button class="btn btn-primary btn-sm" data-action="occupy" data-slot="${slot.slotNumber}"><i class="fas fa-sign-in-alt"></i> Entry</button>` : ""}
+                ${slot.status === "occupied" ? `<button class="btn btn-danger btn-sm" data-action="release" data-slot="${slot.slotNumber}"><i class="fas fa-sign-out-alt"></i> Exit</button>` : ""}
+                ${slot.status === "booked" ? `<button class="btn btn-ghost btn-sm" data-action="cancel" data-slot="${slot.slotNumber}"><i class="fas fa-times"></i> Cancel</button>` : ""}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        contentBody.innerHTML = `
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="fas fa-parking"></i>
+                All Parking Slots
+              </h2>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-ghost btn-sm" onclick="renderSection('slots')">
+                  <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+              </div>
+            </div>
+            <div class="slots-grid">
+              ${cards}
+            </div>
+          </div>
+        `;
+
+        // Add event listeners
+        document.querySelectorAll("[data-action]").forEach(btn => {
+          btn.addEventListener("click", () => handleSlotAction(btn.dataset.action, Number(btn.dataset.slot)));
+        });
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    // Handle slot actions
+    async function handleSlotAction(action, slotNumber) {
+      try {
+        const slotData = await apiFetch("/slots");
+        const slot = slotData.slots.find(s => s.slotNumber === slotNumber);
+        if (!slot) return;
+
+        if (action === "book") {
+          openModal(`Book Slot ${slotNumber}`, `
+            <div class="form-group">
+              <label class="form-label">Vehicle Number</label>
+              <input type="text" class="form-input" id="modalVehicleNo" placeholder="MH12AB1234">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Type</label>
+              <select class="form-select" id="modalVehicleType">
+                <option value="Car">Car</option>
+                <option value="Bike">Bike</option>
+                <option value="Truck">Truck</option>
+                <option value="EV">Electric Vehicle</option>
+              </select>
+            </div>
+          `, async () => {
+            const vehicleNo = document.getElementById("modalVehicleNo").value.trim();
+            const vehicleType = document.getElementById("modalVehicleType").value;
+            if (!vehicleNo) throw new Error("Vehicle number is required");
+            
+            await apiFetch(`/slots/${slotNumber}/book`, {
+              method: "POST",
+              body: JSON.stringify({ vehicleNo, vehicleType })
+            });
+            showToast("Slot booked successfully!");
+            await renderSection(currentSection);
+          });
+        }
+
+        if (action === "occupy") {
+          openModal(`Mark Entry - Slot ${slotNumber}`, `
+            <p>Confirm vehicle entry for this booking.</p>
+            ${slot.vehicleNo ? `<p><strong>Vehicle:</strong> ${slot.vehicleNo}</p>` : ""}
+          `, async () => {
+            await apiFetch(`/slots/${slotNumber}/occupy`, { method: "POST" });
+            showToast("Vehicle entry recorded!");
+            await renderSection(currentSection);
+          });
+        }
+
+        if (action === "release") {
+          const estimate = calculateAmount(slot);
+          openModal(`Release Slot ${slotNumber}`, `
+            <div style="background: var(--bg-light); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
+              <p><strong>Duration:</strong> ${estimate.minutes} minutes</p>
+              <p><strong>Estimated Amount:</strong> ₹${estimate.amount}</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Amount (₹)</label>
+              <input type="number" class="form-input" id="modalPaymentAmount" value="${estimate.amount}" min="0">
+            </div>
+          `, async () => {
+            const amount = document.getElementById("modalPaymentAmount").value;
+            await apiFetch(`/slots/${slotNumber}/release`, {
+              method: "POST",
+              body: JSON.stringify({ amount: Number(amount) })
+            });
+            showToast("Vehicle exited successfully!");
+            await renderSection(currentSection);
+          });
+        }
+
+        if (action === "cancel") {
+          openModal(`Cancel Booking - Slot ${slotNumber}`, `
+            <p>Are you sure you want to cancel this booking?</p>
+            ${slot.vehicleNo ? `<p><strong>Vehicle:</strong> ${slot.vehicleNo}</p>` : ""}
+          `, async () => {
+            await apiFetch(`/slots/${slotNumber}/cancel`, { method: "POST" });
+            showToast("Booking cancelled!", "warning");
+            await renderSection(currentSection);
+          });
+        }
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Entry Section
+    async function renderEntry() {
+      contentBody.innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-sign-in-alt"></i>
+              Vehicle Entry
+            </h2>
+          </div>
+          <div style="max-width: 500px;">
+            <div class="form-group">
+              <label class="form-label">Select Available Slot</label>
+              <select class="form-select" id="entrySlot">
+                <option value="">-- Select Slot --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Number</label>
+              <input type="text" class="form-input" id="entryVehicleNo" placeholder="MH12AB1234">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Type</label>
+              <select class="form-select" id="entryVehicleType">
+                <option value="Car">Car</option>
+                <option value="Bike">Bike</option>
+                <option value="Truck">Truck</option>
+                <option value="EV">Electric Vehicle</option>
+              </select>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="submitEntry()">
+              <i class="fas fa-sign-in-alt"></i>
+              Record Entry
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Load available slots
+      try {
+        const data = await apiFetch("/slots");
+        const slotSelect = document.getElementById("entrySlot");
+        data.slots.filter(s => s.status === "available").forEach(slot => {
+          const option = document.createElement("option");
+          option.value = slot.slotNumber;
+          option.textContent = `Slot ${slot.slotNumber} - ${slot.vehicleType || "All Types"}`;
+          slotSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load slots:", err);
+      }
+    }
+
+    async function submitEntry() {
+      const slotNumber = document.getElementById("entrySlot").value;
+      const vehicleNo = document.getElementById("entryVehicleNo").value.trim();
+      const vehicleType = document.getElementById("entryVehicleType").value;
+
+      if (!slotNumber) {
+        showToast("Please select a slot", "error");
+        return;
+      }
+      if (!vehicleNo) {
+        showToast("Please enter vehicle number", "error");
+        return;
+      }
+
+      try {
+        await apiFetch(`/slots/${slotNumber}/occupy`, {
+          method: "POST",
+          body: JSON.stringify({ vehicleNo, vehicleType })
+        });
+        showToast("Vehicle entry recorded successfully!");
+        renderSection("dashboard");
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Exit Section
+    async function renderExit() {
+      contentBody.innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-sign-out-alt"></i>
+              Vehicle Exit
+            </h2>
+          </div>
+          <div style="max-width: 500px;">
+            <div class="form-group">
+              <label class="form-label">Select Occupied Slot</label>
+              <select class="form-select" id="exitSlot">
+                <option value="">-- Select Slot --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Amount (₹)</label>
+              <input type="number" class="form-input" id="exitAmount" placeholder="0">
+            </div>
+            <button class="btn btn-warning btn-block" onclick="submitExit()">
+              <i class="fas fa-sign-out-alt"></i>
+              Process Exit
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Load occupied slots
+      try {
+        const data = await apiFetch("/slots");
+        const slotSelect = document.getElementById("exitSlot");
+        data.slots.filter(s => s.status === "occupied").forEach(slot => {
+          const option = document.createElement("option");
+          option.value = slot.slotNumber;
+          option.textContent = `Slot ${slot.slotNumber} - ${slot.vehicleNo || "Unknown"}`;
+          slotSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load slots:", err);
+      }
+    }
+
+    async function submitExit() {
+      const slotNumber = document.getElementById("exitSlot").value;
+      const amount = document.getElementById("exitAmount").value;
+
+      if (!slotNumber) {
+        showToast("Please select a slot", "error");
+        return;
+      }
+
+      try {
+        await apiFetch(`/slots/${slotNumber}/release`, {
+          method: "POST",
+          body: JSON.stringify({ amount: Number(amount) || 0 })
+        });
+        showToast("Vehicle exited successfully!");
+        renderSection("dashboard");
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Booking Section
+    async function renderBooking() {
+      contentBody.innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-calendar-check"></i>
+              New Reservation
+            </h2>
+          </div>
+          <div style="max-width: 500px;">
+            <div class="form-group">
+              <label class="form-label">Select Available Slot</label>
+              <select class="form-select" id="bookingSlot">
+                <option value="">-- Select Slot --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Name</label>
+              <input type="text" class="form-input" id="bookingName" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Email</label>
+              <input type="email" class="form-input" id="bookingEmail" placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Phone</label>
+              <input type="tel" class="form-input" id="bookingPhone" placeholder="9876543210">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Number</label>
+              <input type="text" class="form-input" id="bookingVehicleNo" placeholder="MH12AB1234">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Type</label>
+              <select class="form-select" id="bookingVehicleType">
+                <option value="Car">Car</option>
+                <option value="Bike">Bike</option>
+                <option value="Truck">Truck</option>
+                <option value="EV">Electric Vehicle</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Scheduled Date & Time</label>
+              <input type="datetime-local" class="form-input" id="bookingDateTime">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notes (Optional)</label>
+              <textarea class="form-input" id="bookingNotes" placeholder="Special requests or notes" rows="3"></textarea>
+            </div>
+            <button class="btn btn-success btn-block" onclick="submitBooking()">
+              <i class="fas fa-calendar-plus"></i>
+              Create Reservation
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Set default datetime to now
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById("bookingDateTime").value = now.toISOString().slice(0, 16);
+
+      // Load available slots
+      try {
+        const data = await apiFetch("/slots");
+        const slotSelect = document.getElementById("bookingSlot");
+        data.slots.filter(s => s.status === "available").forEach(slot => {
+          const option = document.createElement("option");
+          option.value = slot.slotNumber;
+          option.textContent = `Slot ${slot.slotNumber} - ${slot.vehicleType || "All Types"}`;
+          slotSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load slots:", err);
+      }
+    }
+
+    async function submitBooking() {
+      const slotNumber = document.getElementById("bookingSlot").value;
+      const name = document.getElementById("bookingName").value.trim();
+      const email = document.getElementById("bookingEmail").value.trim();
+      const phone = document.getElementById("bookingPhone").value.trim();
+      const vehicleNo = document.getElementById("bookingVehicleNo").value.trim();
+      const vehicleType = document.getElementById("bookingVehicleType").value;
+      const scheduledTime = document.getElementById("bookingDateTime").value;
+      const notes = document.getElementById("bookingNotes").value.trim();
+
+      console.log("Submitting reservation:", { slotNumber, vehicleNo, vehicleType, scheduledTime });
+
+      if (!slotNumber) {
+        showToast("Please select a slot", "error");
+        return;
+      }
+      if (!vehicleNo) {
+        showToast("Please enter vehicle number", "error");
+        return;
+      }
+      if (!scheduledTime) {
+        showToast("Please select scheduled date and time", "error");
+        return;
+      }
+
+      try {
+        console.log("Calling API...");
+        const response = await apiFetch("/reservations", {
+          method: "POST",
+          body: JSON.stringify({ slotNumber: Number(slotNumber), vehicleNo, vehicleType, customerName: name, customerEmail: email, customerPhone: phone, scheduledTime, notes })
+        });
+        console.log("API Response:", response);
+        showToast("Reservation created successfully!");
+        renderSection("reservations");
+      } catch (err) {
+        console.error("API Error:", err);
+        showToast(err.message, "error");
+      }
+    }
+
+    // Reservations Section
+    async function renderReservations() {
+      contentBody.innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-list"></i>
+              All Reservations
+            </h2>
+            <div style="display: flex; gap: 8px;">
+              <select class="form-select" id="reservationFilter" style="width: auto;" onchange="filterReservations()">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <button class="btn btn-primary" onclick="renderSection('booking')">
+                <i class="fas fa-plus"></i> New
+              </button>
+            </div>
+          </div>
+          <div id="reservationsList">
+            <div style="text-align: center; padding: 40px;">
+              <div class="spinner"></div>
+              <p style="margin-top: 16px; color: var(--text-muted);">Loading reservations...</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      await loadReservations();
+    }
+
+    async function loadReservations() {
+      const filter = document.getElementById("reservationFilter")?.value;
+      let url = "/reservations";
+      if (filter) {
+        url += `?status=${filter}`;
+      }
+
+      try {
+        const data = await apiFetch(url);
+        const reservationsList = document.getElementById("reservationsList");
+        
+        if (!data.reservations || data.reservations.length === 0) {
+          reservationsList.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <i class="fas fa-calendar-xmark" style="font-size: 48px; margin-bottom: 16px;"></i>
+              <p>No reservations found</p>
+            </div>
+          `;
+          return;
+        }
+
+        const reservationsHtml = data.reservations.map(r => `
+          <div class="activity-item">
+            <div class="activity-icon ${r.status === 'confirmed' ? 'booking' : r.status === 'cancelled' ? 'exit' : 'entry'}">
+              <i class="fas ${r.status === 'confirmed' ? 'fa-calendar-check' : r.status === 'cancelled' ? 'fa-calendar-times' : 'fa-clock'}"></i>
+            </div>
+            <div class="activity-content" style="flex: 1;">
+              <div class="activity-title">${r.customerName || 'Customer'} - Slot ${r.slotNumber}</div>
+              <div class="activity-meta">${r.vehicleNo} • ${r.vehicleType} • ${new Date(r.scheduledTime).toLocaleString()}</div>
+              <div class="activity-meta">${r.customerEmail || ''} ${r.customerPhone ? '• ' + r.customerPhone : ''}</div>
+            </div>
+            <span class="status-pill ${r.status === 'confirmed' ? 'pill-booked' : r.status === 'cancelled' ? 'pill-occupied' : 'pill-available'}" style="margin-left: 16px;">
+              ${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+            </span>
+            <div style="display: flex; gap: 8px; margin-left: 12px;">
+              ${r.status !== 'cancelled' && r.status !== 'completed' ? `
+                <button class="btn btn-ghost btn-sm" onclick="cancelReservation('${r._id}')">
+                  <i class="fas fa-times"></i>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `).join("");
+
+        reservationsList.innerHTML = `<div class="activity-list">${reservationsHtml}</div>`;
+      } catch (err) {
+        console.error("Failed to load reservations:", err);
+        document.getElementById("reservationsList").innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--danger);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+            <p>Failed to load reservations: ${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    async function filterReservations() {
+      await loadReservations();
+    }
+
+    async function cancelReservation(id) {
+      openModal("Cancel Reservation", `
+        <p>Are you sure you want to cancel this reservation?</p>
+      `, async () => {
+        try {
+          await apiFetch("/reservations/" + id + "/cancel", { method: "POST" });
+          showToast("Reservation cancelled successfully!");
+          await loadReservations();
+        } catch (err) {
+          showToast(err.message, "error");
+        }
+      });
+    }
+
+    async function submitBooking() {
+      const slotNumber = document.getElementById("bookingSlot").value;
+      const name = document.getElementById("bookingName").value.trim();
+      const email = document.getElementById("bookingEmail").value.trim();
+      const phone = document.getElementById("bookingPhone").value.trim();
+      const vehicleNo = document.getElementById("bookingVehicleNo").value.trim();
+      const vehicleType = document.getElementById("bookingVehicleType").value;
+      const scheduledTime = document.getElementById("bookingDateTime").value;
+      const notes = document.getElementById("bookingNotes").value.trim();
+
+      if (!slotNumber) {
+        showToast("Please select a slot", "error");
+        return;
+      }
+      if (!vehicleNo) {
+        showToast("Please enter vehicle number", "error");
+        return;
+      }
+      if (!scheduledTime) {
+        showToast("Please select scheduled date and time", "error");
+        return;
+      }
+
+      try {
+        await apiFetch("/reservations", {
+          method: "POST",
+          body: JSON.stringify({ 
+            slotNumber: Number(slotNumber), 
+            vehicleNo, 
+            vehicleType, 
+            customerName: name, 
+            customerEmail: email, 
+            customerPhone: phone,
+            scheduledTime,
+            notes
+          })
+        });
+        showToast("Reservation created successfully!");
+        renderSection("reservations");
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Payments Section
+    async function renderPayments() {
+      try {
+        const data = await apiFetch("/payments/recent");
+        const payments = data.payments?.map(p => `
+          <div class="activity-item">
+            <div class="activity-icon payment">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">₹${p.amount} - Slot ${p.slotNumber}</div>
+              <div class="activity-meta">${p.vehicleNo || "Vehicle"} • ${new Date(p.createdAt).toLocaleString()}</div>
+            </div>
+          </div>
+        `).join("") || "<div class='muted'>No payments found</div>";
+
+        contentBody.innerHTML = `
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="fas fa-credit-card"></i>
+                Payment History
+              </h2>
+            </div>
+            <div class="activity-list">
+              ${payments}
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    // Refresh all data
+    async function refreshAll() {
+      await loadUser();
+      await renderSection(currentSection);
+    }
+
+    // Initialize
+    (async function init() {
+      showLoading(true);
+      await loadUser();
+      await renderSection("dashboard");
+      showLoading(false);
+    })();
+  </script>
+</body>
+</html>
